@@ -1,0 +1,37 @@
+services:
+  customerapi:
+    build:
+      context: .
+      dockerfile: CustomerAPI/Dockerfile
+    ports:
+      - "5000:8080"
+    networks:
+      - backend-network
+    depends_on:
+      - rabbitmq
+
+  adminapi:
+    build:
+      context: .
+      dockerfile: AdminAPI/Dockerfile
+    ports:
+      - "5001:8080"
+    networks:
+      - backend-network
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"      # RabbitMQ messaging port
+      - "15672:15672"    # RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
